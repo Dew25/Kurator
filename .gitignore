@@ -1,1 +1,4 @@
 config.php
+*.log
+mode_modules/
+package.json

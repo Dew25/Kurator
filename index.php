@@ -14,6 +14,13 @@
 //     require $fileName;
 // }
 // spl_autoload_register('autoload');
-
+$i=1;
+while($i<4){$name=$i.'PTVR';
+	$groups[$i]=array(
+		'id'=>"$i",
+		'name'=>"$name"
+			);
+	$i++;
+}
 require 'view/templates/list.php';
 ?>
