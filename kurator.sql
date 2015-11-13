@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.2.11
+-- version 4.2.12deb2+deb8u1
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Сен 23 2015 г., 22:55
--- Версия сервера: 5.6.21
--- Версия PHP: 5.6.3
+-- Время создания: Ноя 13 2015 г., 17:07
+-- Версия сервера: 5.5.46-0+deb8u1
+-- Версия PHP: 5.6.14-0+deb8u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -19,8 +19,47 @@ SET time_zone = "+00:00";
 --
 -- База данных: `kurator`
 --
-CREATE DATABASE IF NOT EXISTS `kurator` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `kurator`;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `address`
+--
+
+CREATE TABLE IF NOT EXISTS `address` (
+`id` int(11) NOT NULL,
+  `student_id` int(6) NOT NULL,
+  `region` varchar(40) NOT NULL,
+  `city` varchar(40) NOT NULL,
+  `street` varchar(40) NOT NULL,
+  `house` varchar(5) NOT NULL,
+  `room` varchar(5) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `address`
+--
+
+REPLACE INTO `address` (`id`, `student_id`, `region`, `city`, `street`, `house`, `room`) VALUES
+(1, 1, 'Ida-Viruvaa', 'Johvi', 'Narva mnt.', '80', '33');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `countries`
+--
+
+CREATE TABLE IF NOT EXISTS `countries` (
+`id` int(6) NOT NULL,
+  `country` varchar(20) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `countries`
+--
+
+REPLACE INTO `countries` (`id`, `country`) VALUES
+(1, 'Estonia');
 
 -- --------------------------------------------------------
 
@@ -41,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
 -- Дамп данных таблицы `groups`
 --
 
-INSERT INTO `groups` (`id`, `groupname`, `begin_year`, `end_year`, `begin_month`, `end_month`) VALUES
+REPLACE INTO `groups` (`id`, `groupname`, `begin_year`, `end_year`, `begin_month`, `end_month`) VALUES
 (1, '1PTVR', 2015, 2018, 9, 6),
 (2, '1KTVR', 2015, 2017, 9, 6),
 (3, '2PTVR', 2014, 2017, 9, 6);
@@ -62,10 +101,33 @@ CREATE TABLE IF NOT EXISTS `kurators` (
 -- Дамп данных таблицы `kurators`
 --
 
-INSERT INTO `kurators` (`id`, `id_teacher`, `id_group`) VALUES
+REPLACE INTO `kurators` (`id`, `id_teacher`, `id_group`) VALUES
 (1, 1, 1),
 (2, 2, 3),
 (3, 1, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `parents`
+--
+
+CREATE TABLE IF NOT EXISTS `parents` (
+`id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `status` varchar(20) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `adress_id` int(11) NOT NULL,
+  `info` time NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `parents`
+--
+
+REPLACE INTO `parents` (`id`, `student_id`, `status`, `phone`, `adress_id`, `info`) VALUES
+(1, 1, 'Мать', '56506653', 1, '00:00:00'),
+(2, 1, 'Отец', '56506652', 1, '00:00:00');
 
 -- --------------------------------------------------------
 
@@ -76,28 +138,21 @@ INSERT INTO `kurators` (`id`, `id_teacher`, `id_group`) VALUES
 CREATE TABLE IF NOT EXISTS `students` (
 `id` int(11) NOT NULL,
   `register` int(11) NOT NULL,
-  `id_code` varchar(11) NOT NULL,
+  `personal_code` varchar(11) NOT NULL,
   `family` varchar(40) NOT NULL,
   `name` varchar(20) NOT NULL,
+  `phone` varchar(20) NOT NULL,
   `id_group` int(11) NOT NULL,
-  `telefon` varchar(20) NOT NULL,
-  `cantry` varchar(30) NOT NULL,
-  `city` varchar(20) NOT NULL,
-  `street` varchar(20) NOT NULL,
-  `haus` int(11) NOT NULL,
-  `flat` int(11) NOT NULL,
-  `area` varchar(20) NOT NULL,
-  `bank` varchar(20) NOT NULL,
-  `eban` varchar(20) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+  `id_countries` int(6) NOT NULL,
+  `info` text NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `students`
 --
 
-INSERT INTO `students` (`id`, `register`, `id_code`, `family`, `name`, `id_group`, `telefon`, `cantry`, `city`, `street`, `haus`, `flat`, `area`, `bank`, `eban`) VALUES
-(1, 2542, '36010132214', 'Ivanov', 'Ivan', 1, '565099999', 'Estonia', 'Jõhvi', 'Narva mnt.', 80, 31, 'Ida-Virumaa', 'swed', 'EE22348390403484849'),
-(2, 2543, '39910122216', 'Vassijev', 'Vassili', 2, '434343434', 'Estonia', 'Kohtla-Järve', 'Outokumpu', 32, 45, 'Ida-Virumaa', 'seb', 'EE443302394783343234');
+REPLACE INTO `students` (`id`, `register`, `personal_code`, `family`, `name`, `phone`, `id_group`, `id_countries`, `info`) VALUES
+(1, 2542, '36010132214', 'Ivanov', 'Ivan', '', 1, 1, '');
 
 -- --------------------------------------------------------
 
@@ -107,22 +162,46 @@ INSERT INTO `students` (`id`, `register`, `id_code`, `family`, `name`, `id_group
 
 CREATE TABLE IF NOT EXISTS `teachers` (
 `id` int(11) NOT NULL,
+  `phone` varchar(20) NOT NULL,
   `family` varchar(40) NOT NULL,
-  `name` varchar(20) NOT NULL,
-  `telefon` varchar(20) NOT NULL
+  `name` varchar(20) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `teachers`
 --
 
-INSERT INTO `teachers` (`id`, `family`, `name`, `telefon`) VALUES
-(1, 'Melnikov', 'Jüri', '56509987'),
-(2, 'Bõlova', 'Ljudmila', '5654545645');
+REPLACE INTO `teachers` (`id`, `phone`, `family`, `name`) VALUES
+(1, '', 'Melnikov', 'Jüri'),
+(2, '', 'Bõlova', 'Ljudmila');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `teacher_phone`
+--
+
+CREATE TABLE IF NOT EXISTS `teacher_phone` (
+`id` int(11) NOT NULL,
+  `phone` varchar(12) NOT NULL,
+  `owner_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Индексы сохранённых таблиц
 --
+
+--
+-- Индексы таблицы `address`
+--
+ALTER TABLE `address`
+ ADD PRIMARY KEY (`id`), ADD KEY `student_id` (`student_id`);
+
+--
+-- Индексы таблицы `countries`
+--
+ALTER TABLE `countries`
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Индексы таблицы `groups`
@@ -137,10 +216,16 @@ ALTER TABLE `kurators`
  ADD PRIMARY KEY (`id`), ADD KEY `id_teacher` (`id_teacher`), ADD KEY `id_group` (`id_group`);
 
 --
+-- Индексы таблицы `parents`
+--
+ALTER TABLE `parents`
+ ADD PRIMARY KEY (`id`), ADD KEY `student_id` (`student_id`), ADD KEY `adress_id` (`adress_id`);
+
+--
 -- Индексы таблицы `students`
 --
 ALTER TABLE `students`
- ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `id_code` (`id_code`), ADD KEY `groupname` (`id_group`);
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `id_code` (`personal_code`), ADD KEY `groupname` (`id_group`), ADD KEY `id_countries` (`id_countries`);
 
 --
 -- Индексы таблицы `teachers`
@@ -149,9 +234,25 @@ ALTER TABLE `teachers`
  ADD PRIMARY KEY (`id`);
 
 --
+-- Индексы таблицы `teacher_phone`
+--
+ALTER TABLE `teacher_phone`
+ ADD PRIMARY KEY (`id`), ADD KEY `owner_id` (`owner_id`);
+
+--
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
+--
+-- AUTO_INCREMENT для таблицы `address`
+--
+ALTER TABLE `address`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT для таблицы `countries`
+--
+ALTER TABLE `countries`
+MODIFY `id` int(6) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT для таблицы `groups`
 --
@@ -163,18 +264,34 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 ALTER TABLE `kurators`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
+-- AUTO_INCREMENT для таблицы `parents`
+--
+ALTER TABLE `parents`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
 -- AUTO_INCREMENT для таблицы `students`
 --
 ALTER TABLE `students`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT для таблицы `teachers`
 --
 ALTER TABLE `teachers`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
+-- AUTO_INCREMENT для таблицы `teacher_phone`
+--
+ALTER TABLE `teacher_phone`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- Ограничения внешнего ключа сохраненных таблиц
 --
+
+--
+-- Ограничения внешнего ключа таблицы `address`
+--
+ALTER TABLE `address`
+ADD CONSTRAINT `address_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`);
 
 --
 -- Ограничения внешнего ключа таблицы `kurators`
@@ -184,10 +301,24 @@ ADD CONSTRAINT `kurators_ibfk_1` FOREIGN KEY (`id_teacher`) REFERENCES `teachers
 ADD CONSTRAINT `kurators_ibfk_2` FOREIGN KEY (`id_group`) REFERENCES `groups` (`id`);
 
 --
+-- Ограничения внешнего ключа таблицы `parents`
+--
+ALTER TABLE `parents`
+ADD CONSTRAINT `parents_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT `parents_ibfk_2` FOREIGN KEY (`adress_id`) REFERENCES `address` (`id`);
+
+--
 -- Ограничения внешнего ключа таблицы `students`
 --
 ALTER TABLE `students`
-ADD CONSTRAINT `students_ibfk_1` FOREIGN KEY (`id_group`) REFERENCES `groups` (`id`) ON UPDATE CASCADE;
+ADD CONSTRAINT `students_ibfk_1` FOREIGN KEY (`id_group`) REFERENCES `groups` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `students_ibfk_2` FOREIGN KEY (`id_countries`) REFERENCES `countries` (`id`);
+
+--
+-- Ограничения внешнего ключа таблицы `teacher_phone`
+--
+ALTER TABLE `teacher_phone`
+ADD CONSTRAINT `teacher_phone_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `teachers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
